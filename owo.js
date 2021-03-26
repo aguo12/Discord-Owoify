@@ -88,15 +88,15 @@ XMLHttpRequest.prototype.send = function (data) {
         let message = JSON.parse(data)
         if(message.content === "disable"){
             message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable."
-            send.call(this, JSON.stringify(message));
+            storedSend.call(this, JSON.stringify(message));
             XMLHttpRequest.prototype.send = storedSend;
         } else {
             console.log(owo(message.content))
             message.content = owo(message.content)
-            send.call(this, JSON.stringify(message));
+            storedSend.call(this, JSON.stringify(message));
         }
     } else {
         console.log("Unrelated request or media")
-        send.call(this, data);
+        storedSend.call(this, data);
     }
 }
