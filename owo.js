@@ -1,6 +1,6 @@
 // Please paste this script into your Discord console (open DevTools)
 // Control + Shift + I on Windows machines to toggle DevTools or F12
-
+// Prefix/Suffixes from https://github.com/zuzak/owo/blob/master/owo.js
 const prefixes = [
     '<3 ',
     '0w0 ',
