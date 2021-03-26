@@ -1,6 +1,8 @@
 // Please paste this script into your Discord console (open DevTools)
 // Control + Shift + I on Windows machines to toggle DevTools or F12
 // Prefix/Suffixes from https://github.com/zuzak/owo/blob/master/owo.js
+// Send "disable" in Discord to disable it
+
 const prefixes = [
     '<3 ',
     '0w0 ',
@@ -79,15 +81,22 @@ const substitute = (str) => {
 }
 const owo = (str) => addAffixes(substitute(str))
 
-var send = XMLHttpRequest.prototype.send;
+var storedSend = XMLHttpRequest.prototype.send;
 
 XMLHttpRequest.prototype.send = function (data) {
-    if (this.__sentry_xhr__.method === "POST" && this.__sentry_xhr__.url.includes("messages") && JSON.parse(data).content) {
+    if (this.__sentry_xhr__.method === "POST" && this.__sentry_xhr__.url.includes("messages") && JSON.parse(data).content != undefined) {
         let message = JSON.parse(data)
-        console.log(owo(message.content))
-        message.content = owo(message.content)
-        send.call(this, JSON.stringify(message));
+        if(message.content === "disable"){
+            message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable."
+            send.call(this, JSON.stringify(message));
+            XMLHttpRequest.prototype.send = storedSend;
+        } else {
+            console.log(owo(message.content))
+            message.content = owo(message.content)
+            send.call(this, JSON.stringify(message));
+        }
     } else {
+        console.log("Unrelated request or media")
         send.call(this, data);
     }
 }
