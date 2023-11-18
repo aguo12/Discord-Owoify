@@ -84,7 +84,7 @@ const owo = (str) => addAffixes(substitute(str))
 var storedSend = XMLHttpRequest.prototype.send;
 
 XMLHttpRequest.prototype.send = function (data) {
-    if (this.__sentry_xhr__.method === "POST" && this.__sentry_xhr__.url.includes("messages") && JSON.parse(data).content != undefined) {
+    if (JSON.parse(data) && JSON.parse(data).nonce != undefined && JSON.parse(data).content != undefined && JSON.parse(data).tts != undefined) {
         let message = JSON.parse(data)
         if(message.content === "disable"){
             message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable."
