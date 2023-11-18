@@ -92,7 +92,7 @@ const containsSpecialContent = (message) => {
 }
 
 XMLHttpRequest.prototype.send = function (data) {
-    if (JSON.parse(data) && JSON.parse(data).nonce != undefined && JSON.parse(data).content != undefined && JSON.parse(data).tts != undefined) {
+    if (JSON.parse(data) && JSON.parse(data).nonce != undefined && JSON.parse(data).attachments == undefined && JSON.parse(data).content != undefined && JSON.parse(data).tts != undefined) {
         let message = JSON.parse(data);
         if (message.content === "disable") {
             message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable.";
