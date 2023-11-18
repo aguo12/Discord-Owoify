@@ -92,22 +92,28 @@ const containsSpecialContent = (message) => {
 }
 
 XMLHttpRequest.prototype.send = function (data) {
-    if (JSON.parse(data) && JSON.parse(data).nonce != undefined && JSON.parse(data).attachments == undefined && JSON.parse(data).content != undefined && JSON.parse(data).tts != undefined) {
-        let message = JSON.parse(data);
-        if (message.content === "disable") {
-            message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable.";
-            storedSend.call(this, JSON.stringify(message));
-            XMLHttpRequest.prototype.send = storedSend;
-        } else if (!containsSpecialContent(message.content)) {
-            console.log(owo(message.content));
-            message.content = owo(message.content);
-            storedSend.call(this, JSON.stringify(message));
+    try {
+        const jsonData = JSON.parse(data);
+        if (jsonData && jsonData.nonce && jsonData.content != undefined && jsonData.tts != undefined) {
+            let message = jsonData;
+            if (message.content === "disable") {
+                message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable.";
+                storedSend.call(this, JSON.stringify(message));
+                XMLHttpRequest.prototype.send = storedSend;
+            } else if (!containsSpecialContent(message.content) && !message.attachments) {
+                console.log(owo(message.content));
+                message.content = owo(message.content);
+                storedSend.call(this, JSON.stringify(message));
+            } else {
+                storedSend.call(this, data); // Send the original data for special messages
+            }
         } else {
-            storedSend.call(this, data); // Send the original data for special messages
+            storedSend.call(this, data);
         }
-    } else {
-        console.log("Unrelated request or media");
+    } catch (e) {
+        // If parsing fails, assume it's not a simple text message
         storedSend.call(this, data);
     }
 };
+
 
