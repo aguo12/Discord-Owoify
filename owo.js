@@ -83,20 +83,31 @@ const owo = (str) => addAffixes(substitute(str))
 
 var storedSend = XMLHttpRequest.prototype.send;
 
+const containsSpecialContent = (message) => {
+    const urlPattern = /https?:\/\/[^\s]+/g; // Pattern to match URLs
+    const mentionPattern = /@[^\s]+/g; // Pattern to match mentions
+    const emojiPattern = /:\w+:/g; // Pattern to match emoji codes
+
+    return urlPattern.test(message) || mentionPattern.test(message) || emojiPattern.test(message);
+}
+
 XMLHttpRequest.prototype.send = function (data) {
     if (JSON.parse(data) && JSON.parse(data).nonce != undefined && JSON.parse(data).content != undefined && JSON.parse(data).tts != undefined) {
-        let message = JSON.parse(data)
-        if(message.content === "disable"){
-            message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable."
+        let message = JSON.parse(data);
+        if (message.content === "disable") {
+            message.content = "I am part of Andy's script. Your oWo script has now been disabled. Re-inject to re-enable.";
             storedSend.call(this, JSON.stringify(message));
             XMLHttpRequest.prototype.send = storedSend;
-        } else {
-            console.log(owo(message.content))
-            message.content = owo(message.content)
+        } else if (!containsSpecialContent(message.content)) {
+            console.log(owo(message.content));
+            message.content = owo(message.content);
             storedSend.call(this, JSON.stringify(message));
+        } else {
+            storedSend.call(this, data); // Send the original data for special messages
         }
     } else {
-        console.log("Unrelated request or media")
+        console.log("Unrelated request or media");
         storedSend.call(this, data);
     }
-}
+};
+
